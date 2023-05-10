@@ -49,6 +49,7 @@ void server_run(int outfd, int port) {
       on_message_send(user_event, outfd);
     } else if (user_event->type == WRITE) {
       close(user_event->fd);
+      sleep(3);
       free(user_event);
     } else {
     }
@@ -77,8 +78,6 @@ void submit_write(struct uring_event * event) {
   struct io_uring_sqe *sqe = io_uring_get_sqe(&_ring);
   event->type = WRITE;
   const char * accept_msg = "ACCEPTED\n";
-  printf("sleep\n");
-  sleep(3);
   io_uring_prep_write(sqe, event->fd, accept_msg, strlen(accept_msg), 0);
   io_uring_sqe_set_data(sqe, event);
   io_uring_submit(&_ring);
