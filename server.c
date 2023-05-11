@@ -49,7 +49,7 @@ void server_run(int outfd, int port) {
       on_message_send(user_event, outfd);
     } else if (user_event->type == WRITE) {
       close(user_event->fd);
-      sleep(3);
+      //      sleep(3);
       free(user_event);
     } else {
     }
@@ -80,7 +80,11 @@ void submit_write(struct uring_event * event) {
   const char * accept_msg = "ACCEPTED\n";
   io_uring_prep_write(sqe, event->fd, accept_msg, strlen(accept_msg), 0);
   io_uring_sqe_set_data(sqe, event);
-  io_uring_submit(&_ring);
+  // io_uring_submit(&_ring);
+  struct timespec ts;
+  ts.tv_sec = 3;
+  ts.tv_nsec = 0;
+  io_uring_submit_and_wait_timeout(&_ring, &sqe, 0, &ts, 0);
 }
 
 void init_listenfd(int port) {
